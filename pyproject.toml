@@ -1,5 +1,5 @@
 [project]
-name = "pytorch_tempelate"
+name = "Happywhale_Whale-and-Dolphin-Identification"
 version = "0.1.0"
 description = ""
 authors = [
@@ -33,5 +33,7 @@ url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
 [dependency-groups]
-dev = []
+dev = [
+    "kaggle>=1.7.4.5",
+]
 

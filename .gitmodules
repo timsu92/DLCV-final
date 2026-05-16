@@ -1,0 +1,6 @@
+[submodule "3rd-party/kaggle-happywhale-1st-place"]
+	path = 3rd-party/kaggle-happywhale-1st-place
+	url = https://github.com/knshnb/kaggle-happywhale-1st-place.git
+[submodule "3rd-party/kaggle-happywhale-1st-place-solution-charmq"]
+	path = 3rd-party/kaggle-happywhale-1st-place-solution-charmq
+	url = https://github.com/tyamaguchi17/kaggle-happywhale-1st-place-solution-charmq.git
