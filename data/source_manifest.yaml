@@ -1,0 +1,44 @@
+# Canonical source manifest for Happywhale reproduction.
+# Update this file before first using any external source, document, artifact, bbox, pseudo label, or weight.
+generated_by: scripts/source_manifest.py
+sources:
+  - id: kaggle_competition
+    name: Happywhale competition data
+    type: competition_data
+    url: "https://www.kaggle.com/competitions/happy-whale-and-dolphin"
+    local_path: data
+    commit: ""
+    checksum_sha256: ""
+    retrieved_at: "2026-05-16T19:21:23Z"
+    purpose: Official train/test/sample submission data
+    notes: Already downloaded by user before reproduction work
+  - id: kaggle_first_place_writeup
+    name: Preferred Dolphin first-place writeup
+    type: documentation
+    url: "https://www.kaggle.com/competitions/happy-whale-and-dolphin/writeups/preferred-dolphin-1st-place-solution"
+    local_path: docs/happywhale-1st-place-solution.zh-TW.md
+    commit: ""
+    checksum_sha256: ""
+    retrieved_at: "2026-05-16T19:21:29Z"
+    purpose: Method reference and report citation
+    notes: Kaggle page may require browser login; local Chinese summary is available
+  - id: knshnb_repo
+    name: knshnb Happywhale first-place repo
+    type: git_submodule
+    url: "https://github.com/knshnb/kaggle-happywhale-1st-place"
+    local_path: 3rd-party/kaggle-happywhale-1st-place
+    commit: 69690142177ecb69e8a4d1720837ec02c25071d6
+    checksum_sha256: ""
+    retrieved_at: "2026-05-16T19:21:36Z"
+    purpose: "Primary training, inference, and ensemble pipeline"
+    notes: Preferred Dolphin teammate pipeline
+  - id: charmq_repo
+    name: charmq Happywhale first-place repo
+    type: git_submodule
+    url: "https://github.com/tyamaguchi17/kaggle-happywhale-1st-place-solution-charmq"
+    local_path: 3rd-party/kaggle-happywhale-1st-place-solution-charmq
+    commit: c4ca5e2fe63cf5952fc8afaf0e85d7613a29d00b
+    checksum_sha256: ""
+    retrieved_at: "2026-05-16T19:21:45Z"
+    purpose: Optional second pipeline for prediction-level ensemble
+    notes: Preferred Dolphin teammate pipeline
