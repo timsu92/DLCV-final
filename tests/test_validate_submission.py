@@ -14,6 +14,18 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 
 
 class ValidateSubmissionTests(unittest.TestCase):
+    def test_rejects_reversed_column_order(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sample = root / "sample_submission.csv"
+            train = root / "train.csv"
+            sub = root / "submission.csv"
+            write_csv(sample, [{"image": "a.jpg", "predictions": "x y z q new_individual"}])
+            write_csv(train, [{"image": "t.jpg", "species": "s", "individual_id": "x"}])
+            write_csv(sub, [{"predictions": "x new_individual x x x", "image": "a.jpg"}])
+            with self.assertRaises(ValueError):
+                validate_submission(sub, sample, train)
+
     def test_valid_submission(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

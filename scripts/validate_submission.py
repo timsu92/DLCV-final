@@ -26,7 +26,7 @@ def validate_submission(
     train = read_rows(train_path)
     if not submission:
         raise ValueError("submission has no rows")
-    if set(submission[0].keys()) != {"image", "predictions"}:
+    if list(submission[0].keys()) != ["image", "predictions"]:
         raise ValueError(
             f"submission columns must be image,predictions, got {list(submission[0].keys())}"
         )
