@@ -9,15 +9,46 @@ from pathlib import Path
 RUN_CHILDREN = ["logs", "configs", "predictions", "submissions", "metrics"]
 
 
-def safe_run_name(name: str) -> str:
-    lowered = name.strip().lower()
+def _slugify(value: str, *, fallback: str) -> str:
+    lowered = value.strip().lower()
     replaced = re.sub(r"[^a-z0-9]+", "-", lowered)
-    return replaced.strip("-")
+    cleaned = replaced.strip("-")
+    if cleaned:
+        return cleaned
+    return fallback
+
+
+def _safe_timestamp(timestamp: str) -> str:
+    normalized = re.sub(r"[^A-Za-z0-9]+", "-", timestamp.strip())
+    normalized = normalized.strip("-")
+    normalized = normalized.replace("..", "-")
+    if normalized:
+        return normalized
+    return "timestamp"
+
+
+def _yaml_scalar(value: str) -> str:
+    text = str(value)
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    if "\n" in normalized:
+        lines = normalized.split("\n")
+        return "|\n" + "\n".join(f"  {line}" for line in lines)
+    if normalized == "":
+        return '""'
+    escaped = normalized.replace("\\", "\\\\").replace('"', '\\"')
+    if escaped != normalized or re.search(r"[:#\[\]{}&,*!|>'\"%@`]|^\s|\s$", normalized):
+        return f'"{escaped}"'
+    return normalized
+
+
+def safe_run_name(name: str) -> str:
+    return _slugify(name, fallback="run")
 
 
 def create_run_dir(base_dir: Path, timestamp: str, run_name: str) -> Path:
+    safe_timestamp = _safe_timestamp(timestamp)
     safe_name = safe_run_name(run_name)
-    run_dir = base_dir / f"{timestamp}-{safe_name}"
+    run_dir = base_dir / f"{safe_timestamp}-{safe_name}"
     run_dir.mkdir(parents=True, exist_ok=False)
     for child in RUN_CHILDREN:
         (run_dir / child).mkdir()
@@ -34,11 +65,11 @@ def write_run_manifest(
 ) -> None:
     text = "\n".join(
         [
-            f"run_name: {run_name}",
-            f"created_at: {datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
-            f"command: {command}",
-            f"source_manifest: {source_manifest}",
-            f"notes: {notes}",
+            f"run_name: {_yaml_scalar(run_name)}",
+            f"created_at: {_yaml_scalar(datetime.now().strftime('%Y-%m-%dT%H:%M:%S'))}",
+            f"command: {_yaml_scalar(command)}",
+            f"source_manifest: {_yaml_scalar(source_manifest)}",
+            f"notes: {_yaml_scalar(notes)}",
             "",
         ]
     )
