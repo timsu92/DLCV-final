@@ -6,6 +6,20 @@ from scripts.run_manager import create_run_dir, safe_run_name, write_run_manifes
 
 
 class RunManagerTests(unittest.TestCase):
+    @staticmethod
+    def _extract_literal_block(text: str, key: str) -> str:
+        lines = text.splitlines()
+        prefix = f"{key}: |-"
+        for index, line in enumerate(lines):
+            if line == prefix:
+                block_lines = []
+                for block_line in lines[index + 1 :]:
+                    if not block_line.startswith("  "):
+                        break
+                    block_lines.append(block_line[2:])
+                return "\n".join(block_lines)
+        raise AssertionError(f"missing literal block for {key}")
+
     def test_safe_run_name(self):
         self.assertEqual(safe_run_name("knshnb B7 debug"), "knshnb-b7-debug")
         self.assertEqual(safe_run_name("  B6/B7 ensemble  "), "b6-b7-ensemble")
@@ -46,22 +60,26 @@ class RunManagerTests(unittest.TestCase):
     def test_write_run_manifest_escapes_empty_and_multiline_values(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = create_run_dir(Path(tmp), "2026-05-17-010203", "debug")
+            command = "python -m src.train\n--epochs 1"
+            notes = "line one\nline two"
             write_run_manifest(
                 run_dir,
                 run_name="",
-                command="python -m src.train\n--epochs 1",
-                notes="line one\nline two",
+                command=command,
+                notes=notes,
                 source_manifest="",
             )
             text = (run_dir / "run_manifest.yaml").read_text(encoding="utf-8")
             self.assertIn('run_name: ""', text)
-            self.assertIn("command: |", text)
+            self.assertIn("command: |-", text)
             self.assertIn("  python -m src.train", text)
             self.assertIn("  --epochs 1", text)
-            self.assertIn("notes: |", text)
+            self.assertIn("notes: |-", text)
             self.assertIn("  line one", text)
             self.assertIn("  line two", text)
             self.assertIn('source_manifest: ""', text)
+            self.assertEqual(self._extract_literal_block(text, "command"), command)
+            self.assertEqual(self._extract_literal_block(text, "notes"), notes)
 
     def test_write_run_manifest_quotes_ambiguous_plain_scalars(self):
         with tempfile.TemporaryDirectory() as tmp:

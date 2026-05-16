@@ -43,7 +43,7 @@ def _yaml_scalar(value: str) -> str:
     normalized = text.replace("\r\n", "\n").replace("\r", "\n")
     if "\n" in normalized:
         lines = normalized.split("\n")
-        return "|\n" + "\n".join(f"  {line}" for line in lines)
+        return "|-\n" + "\n".join(f"  {line}" for line in lines)
     if normalized == "":
         return '""'
     escaped = normalized.replace("\\", "\\\\").replace('"', '\\"')
