@@ -52,6 +52,55 @@ class SourceManifestTests(unittest.TestCase):
             self.assertIn("name: Happywhale competition data", text)
             self.assertIn("purpose: Official competition data", text)
 
+    def test_upsert_source_serializes_multiline_notes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "source_manifest.yaml"
+            ensure_manifest(path)
+            upsert_source(
+                path,
+                source_id="multiline_notes",
+                name="Multiline notes source",
+                source_type="documentation",
+                url="https://example.com/source",
+                local_path="docs/source.md",
+                purpose="Exercise multiline serialization",
+                notes="line one\nline two",
+            )
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("notes: |-\n", text)
+            self.assertIn("      line one\n", text)
+            self.assertIn("      line two\n", text)
+
+    def test_upsert_source_replaces_existing_block_with_escaped_id(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "source_manifest.yaml"
+            ensure_manifest(path)
+            source_id = 'repo"mirror'
+            upsert_source(
+                path,
+                source_id=source_id,
+                name="Quoted id source",
+                source_type="documentation",
+                url="https://example.com/source",
+                local_path="docs/source.md",
+                purpose="First write",
+                notes="first",
+            )
+            upsert_source(
+                path,
+                source_id=source_id,
+                name="Quoted id source updated",
+                source_type="documentation",
+                url="https://example.com/source",
+                local_path="docs/source.md",
+                purpose="Second write",
+                notes="second",
+            )
+            text = path.read_text(encoding="utf-8")
+            self.assertEqual(text.count('id: "repo\\"mirror"'), 1)
+            self.assertIn("name: Quoted id source updated", text)
+            self.assertIn("purpose: Second write", text)
+
 
 if __name__ == "__main__":
     unittest.main()

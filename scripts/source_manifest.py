@@ -27,6 +27,19 @@ def yaml_scalar(value: str) -> str:
     return text
 
 
+def yaml_field(prefix: str, value: str, indent: str) -> list[str]:
+    text = str(value)
+    if "\n" not in text:
+        return [f"{prefix}{yaml_scalar(text)}"]
+
+    lines = [f"{prefix}|-"]
+    for part in text.splitlines():
+        lines.append(f"{indent}{part}")
+    if text.endswith("\n"):
+        lines.append(indent)
+    return lines
+
+
 def ensure_manifest(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists():
@@ -55,18 +68,17 @@ def source_block(
     retrieved_at: str | None = None,
 ) -> str:
     retrieved = retrieved_at or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    rows = [
-        f"  - id: {yaml_scalar(source_id)}",
-        f"    name: {yaml_scalar(name)}",
-        f"    type: {yaml_scalar(source_type)}",
-        f"    url: {yaml_scalar(url)}",
-        f"    local_path: {yaml_scalar(local_path)}",
-        f"    commit: {yaml_scalar(commit)}",
-        f"    checksum_sha256: {yaml_scalar(checksum)}",
-        f"    retrieved_at: {yaml_scalar(retrieved)}",
-        f"    purpose: {yaml_scalar(purpose)}",
-        f"    notes: {yaml_scalar(notes)}",
-    ]
+    rows = []
+    rows.extend(yaml_field("  - id: ", source_id, "      "))
+    rows.extend(yaml_field("    name: ", name, "      "))
+    rows.extend(yaml_field("    type: ", source_type, "      "))
+    rows.extend(yaml_field("    url: ", url, "      "))
+    rows.extend(yaml_field("    local_path: ", local_path, "      "))
+    rows.extend(yaml_field("    commit: ", commit, "      "))
+    rows.extend(yaml_field("    checksum_sha256: ", checksum, "      "))
+    rows.extend(yaml_field("    retrieved_at: ", retrieved, "      "))
+    rows.extend(yaml_field("    purpose: ", purpose, "      "))
+    rows.extend(yaml_field("    notes: ", notes, "      "))
     return "\n".join(rows) + "\n"
 
 
@@ -74,12 +86,12 @@ def remove_existing_block(text: str, source_id: str) -> str:
     lines = text.splitlines()
     out: list[str] = []
     index = 0
-    needle = f"  - id: {source_id}"
-    quoted = f'  - id: "{source_id}"'
+    serialized_id = yaml_scalar(source_id)
+    needle = f"  - id: {serialized_id}"
 
     while index < len(lines):
         line = lines[index]
-        if line == needle or line == quoted:
+        if line == needle:
             index += 1
             while index < len(lines) and not lines[index].startswith("  - id: "):
                 index += 1
