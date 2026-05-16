@@ -7,6 +7,17 @@ from pathlib import Path
 
 
 RUN_CHILDREN = ["logs", "configs", "predictions", "submissions", "metrics"]
+AMBIGUOUS_YAML_SCALARS = {
+    "",
+    "~",
+    "null",
+    "true",
+    "false",
+    "yes",
+    "no",
+    "on",
+    "off",
+}
 
 
 def _slugify(value: str, *, fallback: str) -> str:
@@ -36,7 +47,18 @@ def _yaml_scalar(value: str) -> str:
     if normalized == "":
         return '""'
     escaped = normalized.replace("\\", "\\\\").replace('"', '\\"')
-    if escaped != normalized or re.search(r"[:#\[\]{}&,*!|>'\"%@`]|^\s|\s$", normalized):
+    ambiguous = normalized.lower() in AMBIGUOUS_YAML_SCALARS
+    numeric_like = re.fullmatch(r"[-+]?(0|[1-9][0-9]*)(\.[0-9]+)?", normalized) is not None
+    leading_zero_integer = re.fullmatch(r"[-+]?[0-9]+", normalized) is not None and len(
+        normalized.lstrip("+-")
+    ) > 1 and normalized.lstrip("+-").startswith("0")
+    if (
+        escaped != normalized
+        or ambiguous
+        or numeric_like
+        or leading_zero_integer
+        or re.search(r"[:#\[\]{}&,*!|>'\"%@`]|^\s|\s$", normalized)
+    ):
         return f'"{escaped}"'
     return normalized
 

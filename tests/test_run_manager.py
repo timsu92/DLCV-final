@@ -63,6 +63,22 @@ class RunManagerTests(unittest.TestCase):
             self.assertIn("  line two", text)
             self.assertIn('source_manifest: ""', text)
 
+    def test_write_run_manifest_quotes_ambiguous_plain_scalars(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = create_run_dir(Path(tmp), "2026-05-17-010203", "debug")
+            write_run_manifest(
+                run_dir,
+                run_name="null",
+                command="true",
+                notes="yes",
+                source_manifest="01",
+            )
+            text = (run_dir / "run_manifest.yaml").read_text(encoding="utf-8")
+            self.assertIn('run_name: "null"', text)
+            self.assertIn('command: "true"', text)
+            self.assertIn('notes: "yes"', text)
+            self.assertIn('source_manifest: "01"', text)
+
 
 if __name__ == "__main__":
     unittest.main()
