@@ -20,6 +20,15 @@ class LinkSpec:
     target: Path
 
 
+def _validate_target(spec: LinkSpec) -> None:
+    if spec.target.is_symlink():
+        if spec.target.resolve() == spec.source.resolve():
+            return
+        raise FileExistsError(f"Refusing to replace existing target: {spec.target}")
+    if spec.target.exists():
+        raise FileExistsError(f"Refusing to replace existing target: {spec.target}")
+
+
 def build_specs(data_dir: Path, target_dir: Path, repo: str) -> list[LinkSpec]:
     if repo not in VALID_REPOS:
         raise ValueError(f"repo must be knshnb or charmq, got {repo}")
@@ -31,19 +40,16 @@ def prepare_links(specs: list[LinkSpec], dry_run: bool) -> list[str]:
     for spec in specs:
         if not spec.source.exists():
             raise FileNotFoundError(spec.source)
-
         actions.append(f"link {spec.target} -> {spec.source}")
-        if dry_run:
+        _validate_target(spec)
+
+    if dry_run:
+        return actions
+
+    for spec in specs:
+        if spec.target.is_symlink() and spec.target.resolve() == spec.source.resolve():
             continue
-
         spec.target.parent.mkdir(parents=True, exist_ok=True)
-        if spec.target.is_symlink():
-            if spec.target.resolve() == spec.source.resolve():
-                continue
-            raise FileExistsError(f"Refusing to replace existing target: {spec.target}")
-        if spec.target.exists():
-            raise FileExistsError(f"Refusing to replace existing target: {spec.target}")
-
         spec.target.symlink_to(spec.source.resolve(), target_is_directory=spec.source.is_dir())
 
     return actions
