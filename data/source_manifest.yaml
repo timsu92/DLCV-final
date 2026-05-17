@@ -72,3 +72,63 @@ sources:
     retrieved_at: "2026-05-17T06:20:14Z"
     purpose: Fullbody charm bbox crop source for knshnb test-time inference
     notes: Repo artifact; source lineage described in public solution docs
+  - id: phalanx_whale2_train2_via_charmq
+    name: phalanx Detic-bbox train2.csv via charmq sibling
+    type: bbox_artifact
+    url: "https://www.kaggle.com/datasets/phalanx/whale2-cropped-dataset"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/train2.csv
+    commit: ""
+    checksum_sha256: d24f54e3254f7d9e185bc6ba78556593d5e234193df37e98ce5b6a4318bcd380
+    retrieved_at: "2026-05-17T08:57:40Z"
+    purpose: "Detic bbox crops for knshnb train side; consumed by src/dataset.py:load_bbox detic branch"
+    notes: "Original Kaggle source returns HTTP 404 as of 2026-05-17; symlinked from charmq submodule's happywhale_data/train2.csv which preserves a historical copy. Row count 51033 matches official train.csv."
+  - id: phalanx_whale2_test2_via_charmq
+    name: phalanx Detic-bbox test2.csv via charmq sibling
+    type: bbox_artifact
+    url: "https://www.kaggle.com/datasets/phalanx/whale2-cropped-dataset"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/test2.csv
+    commit: ""
+    checksum_sha256: 59ca845dfb6c5d74b1bfdcf956a12b81baae936c814fd268dacd221c8f1be125
+    retrieved_at: "2026-05-17T08:57:44Z"
+    purpose: "Detic bbox crops for knshnb test side; consumed by src/dataset.py:load_bbox detic branch"
+    notes: "Original Kaggle source returns HTTP 404 as of 2026-05-17; symlinked from charmq submodule's happywhale_data/test2.csv which preserves a historical copy. Row count 27956 matches sample_submission.csv."
+  - id: jpbremer_fullbody_train_via_charmq
+    name: jpbremer fullbody_train.csv via charmq sibling
+    type: bbox_artifact
+    url: "https://www.kaggle.com/datasets/jpbremer/fullbodywhaleannotations"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/fullbody_train.csv
+    commit: ""
+    checksum_sha256: c48d669057d2f8bf363b35f41ae060fe49217d18945da39446dd8118a82876dd
+    retrieved_at: "2026-05-17T08:57:53Z"
+    purpose: "Fullbody bbox crops for knshnb train side; consumed by src/dataset.py:load_bbox fullbody branch"
+    notes: "Symlinked from charmq submodule's happywhale_data/fullbody_train.csv. Original Kaggle dataset still available; charmq copy used for consistency with charmq pipeline. Row count 51033."
+  - id: jpbremer_fullbody_test_via_charmq
+    name: jpbremer fullbody_test.csv via charmq sibling
+    type: bbox_artifact
+    url: "https://www.kaggle.com/datasets/jpbremer/fullbodywhaleannotations"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/fullbody_test.csv
+    commit: ""
+    checksum_sha256: 0c1929df5dc26c4a97f06a64659bf916ad5fc38b8295d498342bcb94504982b5
+    retrieved_at: "2026-05-17T08:57:54Z"
+    purpose: "Fullbody bbox crops for knshnb test side; consumed by src/dataset.py:load_bbox fullbody branch"
+    notes: "Symlinked from charmq submodule's happywhale_data/fullbody_test.csv. Row count 27956."
+  - id: jpbremer_train_backfin_via_charmq
+    name: jpbremer train_backfin.csv via charmq sibling
+    type: bbox_artifact
+    url: "https://www.kaggle.com/code/jpbremer/backfin-detection-with-yolov5"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/train_backfin.csv
+    commit: ""
+    checksum_sha256: 9026c5d90836dd3da8b2e0b1a0875e976ae7aef2cce133a5fd98d60670d60370
+    retrieved_at: "2026-05-17T08:57:56Z"
+    purpose: "Backfin bbox crops for knshnb train side; consumed by src/dataset.py:load_bbox backfin branch"
+    notes: "Symlinked from charmq submodule's happywhale_data/train_backfin.csv. Original is YOLO notebook output postprocessed into per-image bbox CSV; charmq copy is the postprocessed form. Row count 51033."
+  - id: jpbremer_test_backfin_via_charmq
+    name: jpbremer test_backfin.csv via charmq sibling
+    type: bbox_artifact
+    url: "https://www.kaggle.com/code/jpbremer/backfin-detection-with-yolov5"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/test_backfin.csv
+    commit: ""
+    checksum_sha256: 9f4df50ec226f375157aef5a8b57c4385bb80022d3b318864d60d00818e52dfb
+    retrieved_at: "2026-05-17T08:57:58Z"
+    purpose: "Backfin bbox crops for knshnb test side; consumed by src/dataset.py:load_bbox backfin branch"
+    notes: "Symlinked from charmq submodule's happywhale_data/test_backfin.csv. Row count 27956."
