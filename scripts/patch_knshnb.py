@@ -1,30 +1,51 @@
 from __future__ import annotations
 
 import argparse
+import re
 from datetime import datetime
 from pathlib import Path
 
 
+TRAIN_BLOCK_START = "    trainer = Trainer(\n"
+TRAIN_BLOCK_END = "    )\n"
 TRAIN_NEEDLE = "        logger=loggers,\n"
 TRAIN_INSERT = '        accumulate_grad_batches=cfg.get("accumulate_grad_batches", 1),\n'
 YAML_LINE = "accumulate_grad_batches: 1\n"
 
 
+def has_top_level_yaml_key(text: str, key: str) -> bool:
+    pattern = re.compile(rf"^{re.escape(key)}\s*:")
+    return any(pattern.match(line) for line in text.splitlines())
+
+
 def patch_default_yaml(path: Path) -> bool:
     text = path.read_text(encoding="utf-8")
-    if "accumulate_grad_batches:" in text:
+    if has_top_level_yaml_key(text, "accumulate_grad_batches"):
         return False
     path.write_text(text.rstrip() + "\n" + YAML_LINE, encoding="utf-8")
     return True
 
 
+def trainer_block_range(text: str, path: Path) -> tuple[int, int]:
+    start = text.find(TRAIN_BLOCK_START)
+    if start == -1:
+        raise ValueError(f"Could not find trainer = Trainer(...) block in {path}")
+    end = text.find(TRAIN_BLOCK_END, start + len(TRAIN_BLOCK_START))
+    if end == -1:
+        raise ValueError(f"Could not find end of trainer = Trainer(...) block in {path}")
+    return start, end + len(TRAIN_BLOCK_END)
+
+
 def patch_train_py(path: Path) -> bool:
     text = path.read_text(encoding="utf-8")
-    if TRAIN_INSERT.strip() in text:
+    start, end = trainer_block_range(text, path)
+    block = text[start:end]
+    if TRAIN_INSERT in block:
         return False
-    if TRAIN_NEEDLE not in text:
-        raise ValueError(f"Could not find Trainer logger line in {path}")
-    path.write_text(text.replace(TRAIN_NEEDLE, TRAIN_NEEDLE + TRAIN_INSERT, 1), encoding="utf-8")
+    if TRAIN_NEEDLE not in block:
+        raise ValueError(f"Could not find logger=loggers line inside trainer = Trainer(...) block in {path}")
+    patched_block = block.replace(TRAIN_NEEDLE, TRAIN_NEEDLE + TRAIN_INSERT, 1)
+    path.write_text(text[:start] + patched_block + text[end:], encoding="utf-8")
     return True
 
 
@@ -60,7 +81,8 @@ def main() -> None:
         changed.append(str(repo / "config" / "default.yaml"))
     if patch_train_py(repo / "src" / "train.py"):
         changed.append(str(repo / "src" / "train.py"))
-    write_patch_note(Path(args.note), changed)
+    if changed:
+        write_patch_note(Path(args.note), changed)
     print(f"changed={len(changed)}")
 
 
