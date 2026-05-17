@@ -27,7 +27,7 @@ sources:
     type: git_submodule
     url: "https://github.com/knshnb/kaggle-happywhale-1st-place"
     local_path: 3rd-party/kaggle-happywhale-1st-place
-    commit: 69690142177ecb69e8a4d1720837ec02c25071d6
+    commit: 6e78f87caa7f0242ffe3288d46f8567d40dae3f3
     checksum_sha256: ""
     retrieved_at: "2026-05-16T19:21:36Z"
     purpose: "Primary training, inference, and ensemble pipeline"
@@ -45,9 +45,9 @@ sources:
   - id: knshnb_requirements
     name: knshnb pinned Python requirements
     type: dependency_spec
-    url: "https://github.com/knshnb/kaggle-happywhale-1st-place/blob/master/requirements.txt"
+    url: "https://github.com/knshnb/kaggle-happywhale-1st-place/blob/6e78f87caa7f0242ffe3288d46f8567d40dae3f3/requirements.txt"
     local_path: 3rd-party/kaggle-happywhale-1st-place/requirements.txt
-    commit: ""
+    commit: 6e78f87caa7f0242ffe3288d46f8567d40dae3f3
     checksum_sha256: 0b0e2c384693cd73f8438fe9725c69ce7f782393a6a162434f02982be180a351
     retrieved_at: "2026-05-17T06:00:22Z"
     purpose: Dependency source for knshnb reproduction environment

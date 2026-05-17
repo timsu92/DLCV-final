@@ -4,13 +4,17 @@ Purpose: dedicated environment for `3rd-party/kaggle-happywhale-1st-place`.
 
 This environment must not replace the main project environment.
 
-Preferred Python: 3.10 or 3.11.
+Reproduced against knshnb submodule commit `6e78f87caa7f0242ffe3288d46f8567d40dae3f3`.
+
+Preferred Python: 3.10.
+
+Python 3.11 is not a drop-in fallback for the frozen environment in `results/knshnb-freeze.txt`. That freeze includes `scipy==1.8.1`, which is not reproducible unchanged on Python 3.11. Use 3.11 only for a separate compatibility investigation and record the resulting dependency changes.
 
 Pinned repo requirements:
 
 - `3rd-party/kaggle-happywhale-1st-place/requirements.txt`
 
-Installation command to try first:
+Initial attempt from the Task 8 plan:
 
 ```bash
 uv venv .venv-knshnb --python 3.10
@@ -20,12 +24,27 @@ uv pip install -r 3rd-party/kaggle-happywhale-1st-place/requirements.txt
 python -m pip freeze > results/knshnb-freeze.txt
 ```
 
-If Python 3.10 is not available locally, use Python 3.11 and record the change in this file.
+Working reproducible sequence used on 2026-05-17:
 
-If old PyTorch Lightning fails with installed torch, patch compatibility only after recording the failure and command output.
+```bash
+uv venv .venv-knshnb --python 3.10
+uv pip install --python .venv-knshnb/bin/python torch torchvision --index-url https://download.pytorch.org/whl/cu128
+uv pip install --python .venv-knshnb/bin/python -r 3rd-party/kaggle-happywhale-1st-place/requirements.txt
+uv pip install --python .venv-knshnb/bin/python pip
+uv pip install --python .venv-knshnb/bin/python protobuf==3.20.3
+.venv-knshnb/bin/python -m pip freeze > results/knshnb-freeze.txt
+```
+
+Verification command:
+
+```bash
+.venv-knshnb/bin/python -c "import torch, timm, pytorch_lightning, albumentations, pandas, sklearn; print(torch.__version__); print(timm.__version__)"
+```
+
+If old PyTorch Lightning fails with installed torch, record the failure and command output before applying any further compatibility change.
 
 Observed on 2026-05-17:
 
 - `uv venv .venv-knshnb --python 3.10` succeeded after downloading CPython 3.10.20.
-- `python -m pip freeze` initially failed because the environment did not include `pip`; `uv pip install --python .venv-knshnb/bin/python pip` was required before freezing.
+- The initial attempt was not sufficient as written: `python -m pip freeze` failed because the environment did not include `pip`; `uv pip install --python .venv-knshnb/bin/python pip` was required before freezing.
 - Import verification initially failed with `TypeError: Descriptors cannot be created directly` while `timm` imported `wandb`; `uv pip install --python .venv-knshnb/bin/python protobuf==3.20.3` fixed the compatibility issue.
