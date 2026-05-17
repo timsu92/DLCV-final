@@ -48,3 +48,7 @@ Observed on 2026-05-17:
 - `uv venv .venv-knshnb --python 3.10` succeeded after downloading CPython 3.10.20.
 - The initial attempt was not sufficient as written: `python -m pip freeze` failed because the environment did not include `pip`; `uv pip install --python .venv-knshnb/bin/python pip` was required before freezing.
 - Import verification initially failed with `TypeError: Descriptors cannot be created directly` while `timm` imported `wandb`; `uv pip install --python .venv-knshnb/bin/python protobuf==3.20.3` fixed the compatibility issue.
+
+Observed on 2026-05-17 (second pin, during smoke-test data loader):
+
+- Training data loader crashed with `AttributeError: module 'numpy' has no attribute 'int'` inside `albumentations==1.1.0` (`RandomGridShuffle.get_params_dependent_on_targets`). `np.int` was removed in numpy 1.24. `requirements.txt` pins `albumentations==1.1.0` but does not pin numpy, so it had resolved to numpy 1.24.4. Fixed with `.venv-knshnb/bin/pip install 'numpy<1.24'` which installed numpy 1.23.5. Refresh `results/knshnb-freeze.txt` after confirming the smoke test passes.
