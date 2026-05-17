@@ -52,3 +52,23 @@ sources:
     retrieved_at: "2026-05-17T06:00:22Z"
     purpose: Dependency source for knshnb reproduction environment
     notes: "Used to create dedicated reproduction env, not main project env"
+  - id: fullbody_train_charm_knshnb
+    name: fullbody_train_charm.csv from knshnb repo
+    type: bbox_artifact
+    url: "https://github.com/knshnb/kaggle-happywhale-1st-place"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/fullbody_train_charm.csv
+    commit: ""
+    checksum_sha256: 97a1b40e185dcbf9298a61a907e1f4691333ea9c5e977dcdfd8f8a1b98e69b06
+    retrieved_at: "2026-05-17T06:20:03Z"
+    purpose: Fullbody charm bbox crop source for knshnb training/inference
+    notes: Repo artifact; source lineage described in public solution docs
+  - id: fullbody_test_charm_knshnb
+    name: fullbody_test_charm.csv from knshnb repo
+    type: bbox_artifact
+    url: "https://github.com/knshnb/kaggle-happywhale-1st-place"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/fullbody_test_charm.csv
+    commit: ""
+    checksum_sha256: ecff048a2547076fb9689631805aa4b11913a5f95d310f98645f188b36b524bf
+    retrieved_at: "2026-05-17T06:20:14Z"
+    purpose: Fullbody charm bbox crop source for knshnb test-time inference
+    notes: Repo artifact; source lineage described in public solution docs
