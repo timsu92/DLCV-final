@@ -1,17 +1,23 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 from datetime import datetime
 from pathlib import Path
 
 
 def slug(text: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    value = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return value or "untitled"
+
+
+def title_digest(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def note_filename(kind: str, title: str) -> str:
-    return f"{slug(kind)}-{slug(title)}.md"
+    return f"{slug(kind)}-{slug(title)}-{title_digest(title)}.md"
 
 
 def append_note(base_dir: Path, *, kind: str, title: str, body: str) -> Path:
