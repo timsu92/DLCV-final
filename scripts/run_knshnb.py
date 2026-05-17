@@ -17,6 +17,10 @@ DEBUG_RUN_NAME = "knshnb-debug"
 DEBUG_NOTES = "Debug-sized knshnb train/inference smoke test"
 
 
+def command_to_text(command: list[str]) -> str:
+    return " ".join(command)
+
+
 def build_train_command(
     *,
     config_path: str,
@@ -69,19 +73,20 @@ def prepare_debug_run(
 ) -> tuple[Path, list[str]]:
     run_timestamp = timestamp or datetime.now().strftime("%Y-%m-%d-%H%M%S")
     run_dir = create_run_dir(base_dir, run_timestamp, DEBUG_RUN_NAME)
-    write_run_manifest(
-        run_dir,
-        run_name=safe_run_name(DEBUG_RUN_NAME),
-        command=f"python -m src.train --config_path {DEBUG_CONFIG_PATH} --exp_name {DEBUG_EXP_NAME}",
-        notes=DEBUG_NOTES,
-        source_manifest=source_manifest,
-    )
+    predictions_dir = (run_dir / "predictions").resolve()
     command = build_train_command(
         config_path=DEBUG_CONFIG_PATH,
         exp_name=DEBUG_EXP_NAME,
-        out_base_dir=str(run_dir / "predictions"),
+        out_base_dir=str(predictions_dir),
         in_base_dir=in_base_dir,
         save_checkpoint=save_checkpoint,
+    )
+    write_run_manifest(
+        run_dir,
+        run_name=safe_run_name(DEBUG_RUN_NAME),
+        command=command_to_text(command),
+        notes=DEBUG_NOTES,
+        source_manifest=source_manifest,
     )
     return run_dir, command
 
@@ -114,7 +119,7 @@ def main() -> None:
             save_checkpoint=args.save_checkpoint,
         )
 
-    print(" ".join(command))
+    print(command_to_text(command))
 
     if not args.dry_run:
         subprocess.run(command, cwd=Path(args.repo), check=True)
