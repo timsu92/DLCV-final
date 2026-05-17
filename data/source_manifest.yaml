@@ -42,3 +42,13 @@ sources:
     retrieved_at: "2026-05-16T19:21:45Z"
     purpose: Optional second pipeline for prediction-level ensemble
     notes: Preferred Dolphin teammate pipeline
+  - id: knshnb_requirements
+    name: knshnb pinned Python requirements
+    type: dependency_spec
+    url: "https://github.com/knshnb/kaggle-happywhale-1st-place/blob/master/requirements.txt"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/requirements.txt
+    commit: ""
+    checksum_sha256: 0b0e2c384693cd73f8438fe9725c69ce7f782393a6a162434f02982be180a351
+    retrieved_at: "2026-05-17T06:00:22Z"
+    purpose: Dependency source for knshnb reproduction environment
+    notes: "Used to create dedicated reproduction env, not main project env"
