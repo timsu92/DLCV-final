@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -47,6 +48,14 @@ def build_train_command(
     return command
 
 
+def build_execution_command(command: list[str], *, interpreter_path: str | None = None) -> list[str]:
+    if not command:
+        raise ValueError("command must not be empty")
+    if command[0] != "python":
+        return list(command)
+    return [interpreter_path or sys.executable, *command[1:]]
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default="3rd-party/kaggle-happywhale-1st-place")
@@ -81,6 +90,7 @@ def prepare_debug_run(
         in_base_dir=in_base_dir,
         save_checkpoint=save_checkpoint,
     )
+    command = build_execution_command(command)
     write_run_manifest(
         run_dir,
         run_name=safe_run_name(DEBUG_RUN_NAME),
@@ -118,6 +128,7 @@ def main() -> None:
             in_base_dir=args.in_base_dir,
             save_checkpoint=args.save_checkpoint,
         )
+        command = build_execution_command(command)
 
     print(command_to_text(command))
 

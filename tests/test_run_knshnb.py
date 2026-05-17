@@ -54,17 +54,18 @@ class RunKnshnbTests(unittest.TestCase):
             manifest = (run_dir / "run_manifest.yaml").read_text(encoding="utf-8")
             self.assertIn("run_name: knshnb-debug", manifest)
             self.assertIn(
-                f"command: python -m src.train --config_path config/debug.yaml --exp_name debug "
+                f"command: {sys.executable} -m src.train --config_path config/debug.yaml --exp_name debug "
                 f"--out_base_dir {command[8]} --in_base_dir input",
                 manifest,
             )
             self.assertIn("source_manifest: data/source_manifest.yaml", manifest)
+            self.assertEqual(command[0], sys.executable)
             self.assertTrue(Path(command[8]).is_absolute())
             self.assertEqual(Path(command[8]), (run_dir / "predictions").resolve())
             self.assertEqual(
                 command,
                 [
-                    "python",
+                    sys.executable,
                     "-m",
                     "src.train",
                     "--config_path",
@@ -122,7 +123,7 @@ class RunKnshnbTests(unittest.TestCase):
             self.assertEqual(lines[0], str(Path(tmp) / "results" / "2026-05-17-010203-knshnb-debug"))
             self.assertEqual(
                 lines[1],
-                "python -m src.train --config_path config/debug.yaml --exp_name debug "
+                f"{sys.executable} -m src.train --config_path config/debug.yaml --exp_name debug "
                 f"--out_base_dir {(Path(tmp) / 'results' / '2026-05-17-010203-knshnb-debug' / 'predictions').resolve()} "
                 "--in_base_dir input",
             )
