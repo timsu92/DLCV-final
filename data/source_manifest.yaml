@@ -132,3 +132,13 @@ sources:
     retrieved_at: "2026-05-17T08:57:58Z"
     purpose: "Backfin bbox crops for knshnb test side; consumed by src/dataset.py:load_bbox backfin branch"
     notes: "Symlinked from charmq submodule's happywhale_data/test_backfin.csv. Row count 27956."
+  - id: pseudo_labels_round2_knshnb
+    name: Preferred Dolphin round2 pseudo labels
+    type: pseudo_label
+    url: "https://github.com/knshnb/kaggle-happywhale-1st-place"
+    local_path: 3rd-party/kaggle-happywhale-1st-place/input/pseudo_labels/round2.csv
+    commit: ""
+    checksum_sha256: 86a01189f8f126a90f92331689717a7a52f7fe8a100170fd4db95b87fb73a6a5
+    retrieved_at: "2026-05-17T09:07:50Z"
+    purpose: Pseudo labels used by knshnb B6/B7 reproduction configs (pseudo_conf_threshold 0.6)
+    notes: Public solution artifact present in knshnb submodule input/pseudo_labels/round2.csv. Referenced by config/efficientnet_b6.yaml and config/efficientnet_b7.yaml.
