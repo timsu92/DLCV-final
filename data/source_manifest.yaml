@@ -142,3 +142,13 @@ sources:
     retrieved_at: "2026-05-17T09:07:50Z"
     purpose: Pseudo labels used by knshnb B6/B7 reproduction configs (pseudo_conf_threshold 0.6)
     notes: Public solution artifact present in knshnb submodule input/pseudo_labels/round2.csv. Referenced by config/efficientnet_b6.yaml and config/efficientnet_b7.yaml.
+  - id: charmq_requirements
+    name: charmq pinned Python requirements
+    type: dependency_spec
+    url: "https://github.com/tyamaguchi17/kaggle-happywhale-1st-place-solution-charmq/blob/master/requirements.txt"
+    local_path: 3rd-party/kaggle-happywhale-1st-place-solution-charmq/requirements.txt
+    commit: ""
+    checksum_sha256: 3752964dcc9ba672c2baec45b9ffb1ef2f30d8904738192b0e2cad1a0526f73f
+    retrieved_at: "2026-05-20T08:27:46Z"
+    purpose: Dependency source for optional charmq reproduction environment
+    notes: Use only after knshnb B6/B7 ensemble is stable
