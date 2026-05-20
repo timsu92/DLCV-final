@@ -29,6 +29,7 @@ def build_train_command(
     out_base_dir: str,
     in_base_dir: str,
     save_checkpoint: bool,
+    load_snapshot: bool = False,
 ) -> list[str]:
     command = [
         "python",
@@ -45,6 +46,8 @@ def build_train_command(
     ]
     if save_checkpoint:
         command.append("--save_checkpoint")
+    if load_snapshot:
+        command.append("--load_snapshot")
     return command
 
 
@@ -64,6 +67,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--out-base-dir")
     parser.add_argument("--in-base-dir", default="input")
     parser.add_argument("--save-checkpoint", action="store_true")
+    parser.add_argument("--load-snapshot", action="store_true")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--base-dir", default="results")
     parser.add_argument("--timestamp")
@@ -127,6 +131,7 @@ def main() -> None:
             out_base_dir=args.out_base_dir,
             in_base_dir=args.in_base_dir,
             save_checkpoint=args.save_checkpoint,
+            load_snapshot=args.load_snapshot,
         )
         command = build_execution_command(command)
 

@@ -43,6 +43,28 @@ class RunKnshnbTests(unittest.TestCase):
         )
         self.assertIn("--save_checkpoint", command)
 
+    def test_build_command_with_load_snapshot(self):
+        command = build_train_command(
+            config_path="config/efficientnet_b6.yaml",
+            exp_name="b6",
+            out_base_dir="/project/results/run/predictions",
+            in_base_dir="input",
+            save_checkpoint=True,
+            load_snapshot=True,
+        )
+        self.assertIn("--load_snapshot", command)
+        self.assertIn("--save_checkpoint", command)
+
+    def test_build_command_without_load_snapshot_omits_flag(self):
+        command = build_train_command(
+            config_path="config/efficientnet_b6.yaml",
+            exp_name="b6",
+            out_base_dir="/project/results/run/predictions",
+            in_base_dir="input",
+            save_checkpoint=False,
+        )
+        self.assertNotIn("--load_snapshot", command)
+
     def test_prepare_debug_run_creates_run_dir_and_command(self):
         with tempfile.TemporaryDirectory() as tmp:
             run_dir, command = prepare_debug_run(
@@ -98,6 +120,13 @@ class RunKnshnbTests(unittest.TestCase):
         self.assertIsNone(args.config_path)
         self.assertIsNone(args.exp_name)
         self.assertIsNone(args.out_base_dir)
+
+    def test_build_parser_load_snapshot_defaults_false_and_can_be_set(self):
+        parser = build_parser()
+        args = parser.parse_args(["--debug", "--dry-run"])
+        self.assertFalse(args.load_snapshot)
+        args = parser.parse_args(["--debug", "--dry-run", "--load-snapshot"])
+        self.assertTrue(args.load_snapshot)
 
     def test_debug_dry_run_entrypoint_creates_run_dir_and_prints_command(self):
         with tempfile.TemporaryDirectory() as tmp:
