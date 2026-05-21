@@ -42,36 +42,6 @@ sources:
     retrieved_at: "2026-05-16T19:21:45Z"
     purpose: Optional second pipeline for prediction-level ensemble
     notes: Preferred Dolphin teammate pipeline
-  - id: knshnb_requirements
-    name: knshnb pinned Python requirements
-    type: dependency_spec
-    url: "https://github.com/knshnb/kaggle-happywhale-1st-place/blob/6e78f87caa7f0242ffe3288d46f8567d40dae3f3/requirements.txt"
-    local_path: 3rd-party/kaggle-happywhale-1st-place/requirements.txt
-    commit: 6e78f87caa7f0242ffe3288d46f8567d40dae3f3
-    checksum_sha256: 0b0e2c384693cd73f8438fe9725c69ce7f782393a6a162434f02982be180a351
-    retrieved_at: "2026-05-17T06:00:22Z"
-    purpose: Dependency source for knshnb reproduction environment
-    notes: "Used to create dedicated reproduction env, not main project env"
-  - id: fullbody_train_charm_knshnb
-    name: fullbody_train_charm.csv from knshnb repo
-    type: bbox_artifact
-    url: "https://github.com/knshnb/kaggle-happywhale-1st-place"
-    local_path: 3rd-party/kaggle-happywhale-1st-place/input/fullbody_train_charm.csv
-    commit: ""
-    checksum_sha256: 97a1b40e185dcbf9298a61a907e1f4691333ea9c5e977dcdfd8f8a1b98e69b06
-    retrieved_at: "2026-05-17T06:20:03Z"
-    purpose: Fullbody charm bbox crop source for knshnb training/inference
-    notes: Repo artifact; source lineage described in public solution docs
-  - id: fullbody_test_charm_knshnb
-    name: fullbody_test_charm.csv from knshnb repo
-    type: bbox_artifact
-    url: "https://github.com/knshnb/kaggle-happywhale-1st-place"
-    local_path: 3rd-party/kaggle-happywhale-1st-place/input/fullbody_test_charm.csv
-    commit: ""
-    checksum_sha256: ecff048a2547076fb9689631805aa4b11913a5f95d310f98645f188b36b524bf
-    retrieved_at: "2026-05-17T06:20:14Z"
-    purpose: Fullbody charm bbox crop source for knshnb test-time inference
-    notes: Repo artifact; source lineage described in public solution docs
   - id: phalanx_whale2_train2_via_charmq
     name: phalanx Detic-bbox train2.csv via charmq sibling
     type: bbox_artifact
@@ -142,13 +112,3 @@ sources:
     retrieved_at: "2026-05-17T09:07:50Z"
     purpose: Pseudo labels used by knshnb B6/B7 reproduction configs (pseudo_conf_threshold 0.6)
     notes: Public solution artifact present in knshnb submodule input/pseudo_labels/round2.csv. Referenced by config/efficientnet_b6.yaml and config/efficientnet_b7.yaml.
-  - id: charmq_requirements
-    name: charmq pinned Python requirements
-    type: dependency_spec
-    url: "https://github.com/tyamaguchi17/kaggle-happywhale-1st-place-solution-charmq/blob/master/requirements.txt"
-    local_path: 3rd-party/kaggle-happywhale-1st-place-solution-charmq/requirements.txt
-    commit: ""
-    checksum_sha256: 3752964dcc9ba672c2baec45b9ffb1ef2f30d8904738192b0e2cad1a0526f73f
-    retrieved_at: "2026-05-20T08:27:46Z"
-    purpose: Dependency source for optional charmq reproduction environment
-    notes: Use only after knshnb B6/B7 ensemble is stable
