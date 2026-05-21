@@ -1,3 +1,4 @@
+"""將實驗的結果記錄到 Markdown 文件中，方便後續查閱和分析。"""
 from __future__ import annotations
 
 import argparse

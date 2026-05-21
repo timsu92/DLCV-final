@@ -47,7 +47,9 @@
       "Bash(rtk git -C * status)",
       "Bash(rtk git -C * commit *)",
       "Bash(python *)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(nvidia-smi *)",
+      "Bash(rtk wc *)"
     ]
   }
 }

@@ -1,9 +1,10 @@
+"""準備數據的腳本，通過創建符號鏈接將數據集從原始位置鏈接到指定的目錄。"""
+
 from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
-
 
 COMMON_ENTRIES = (
     "train.csv",
