@@ -1,3 +1,6 @@
+"""Record all modifications needed to apply to knshnb's repo.
+However, since I'm using my fork repo, this file isn't much needed anymore."""
+
 from __future__ import annotations
 
 import argparse
@@ -5,12 +8,28 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-
 TRAIN_BLOCK_START = "    trainer = Trainer(\n"
 TRAIN_BLOCK_END = "    )\n"
 TRAIN_NEEDLE = "        logger=loggers,\n"
 TRAIN_INSERT = '        accumulate_grad_batches=cfg.get("accumulate_grad_batches", 1),\n'
 YAML_LINE = "accumulate_grad_batches: 1\n"
+
+# foreach=False patch: disables PyTorch 2.x multi-tensor Adam which requires all
+# optimizer state tensors on the same device — breaks DDP checkpoint resume with PL 1.5.x
+FOREACH_PATCHES = [
+    (
+        "optimizer = torch.optim.Adam(params)\n",
+        "optimizer = torch.optim.Adam(params, foreach=False)\n",
+    ),
+    (
+        "optimizer = torch.optim.AdamW(params)\n",
+        "optimizer = torch.optim.AdamW(params, foreach=False)\n",
+    ),
+    (
+        "optimizer = torch.optim.RAdam(params)\n",
+        "optimizer = torch.optim.RAdam(params, foreach=False)\n",
+    ),
+]
 
 
 def has_top_level_yaml_key(text: str, key: str) -> bool:
@@ -69,6 +88,19 @@ def write_patch_note(path: Path, changed_files: list[str]) -> None:
     path.write_text(body, encoding="utf-8")
 
 
+def patch_optimizer_foreach(path: Path) -> bool:
+    text = path.read_text(encoding="utf-8")
+    if "foreach=False" in text:
+        return False
+    patched = text
+    for old, new in FOREACH_PATCHES:
+        patched = patched.replace(old, new)
+    if patched == text:
+        raise ValueError(f"Could not find optimizer lines to patch in {path}")
+    path.write_text(patched, encoding="utf-8")
+    return True
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default="3rd-party/kaggle-happywhale-1st-place")
@@ -81,6 +113,8 @@ def main() -> None:
         changed.append(str(repo / "config" / "default.yaml"))
     if patch_train_py(repo / "src" / "train.py"):
         changed.append(str(repo / "src" / "train.py"))
+    if patch_optimizer_foreach(repo / "src" / "train.py"):
+        changed.append(str(repo / "src" / "train.py") + " (foreach=False)")
     if changed:
         write_patch_note(Path(args.note), changed)
     print(f"changed={len(changed)}")
