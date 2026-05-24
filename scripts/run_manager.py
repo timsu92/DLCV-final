@@ -77,6 +77,13 @@ def create_run_dir(base_dir: Path, timestamp: str, run_name: str) -> Path:
     return run_dir
 
 
+def update_manifest_command(run_dir: Path, command: str) -> None:
+    manifest_path = run_dir / "run_manifest.yaml"
+    text = manifest_path.read_text(encoding="utf-8")
+    text = re.sub(r"^command:.*$", f"command: {_yaml_scalar(command)}", text, flags=re.MULTILINE)
+    manifest_path.write_text(text, encoding="utf-8")
+
+
 def write_run_manifest(
     run_dir: Path,
     *,

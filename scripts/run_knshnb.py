@@ -7,9 +7,9 @@ from datetime import datetime
 from pathlib import Path
 
 try:
-    from scripts.run_manager import create_run_dir, safe_run_name, write_run_manifest
+    from scripts.run_manager import create_run_dir, safe_run_name, update_manifest_command, write_run_manifest
 except ModuleNotFoundError:
-    from run_manager import create_run_dir, safe_run_name, write_run_manifest
+    from run_manager import create_run_dir, safe_run_name, update_manifest_command, write_run_manifest
 
 
 DEBUG_CONFIG_PATH = "config/debug.yaml"
@@ -77,6 +77,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--ckpt-path", default=None, help="Explicit checkpoint path for resume.")
     parser.add_argument("--checkpoint-every-n-epochs", type=int, default=0,
                         help="Save per-epoch checkpoint every N epochs (0 = only last.ckpt).")
+    parser.add_argument("--run-dir", default=None,
+                        help="Existing run directory created by run_manager.py. If provided, updates run_manifest.yaml with the training command.")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--base-dir", default="results")
     parser.add_argument("--timestamp")
@@ -145,6 +147,9 @@ def main() -> None:
             checkpoint_every_n_epochs=args.checkpoint_every_n_epochs,
         )
         command = build_execution_command(command)
+
+        if args.run_dir is not None:
+            update_manifest_command(Path(args.run_dir), command_to_text(command))
 
     print(command_to_text(command))
 
