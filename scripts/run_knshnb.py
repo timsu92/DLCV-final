@@ -30,6 +30,7 @@ def build_train_command(
     in_base_dir: str,
     save_checkpoint: bool,
     load_snapshot: bool = False,
+    checkpoint_every_n_epochs: int = 0,
 ) -> list[str]:
     command = [
         "python",
@@ -48,6 +49,8 @@ def build_train_command(
         command.append("--save_checkpoint")
     if load_snapshot:
         command.append("--load_snapshot")
+    if checkpoint_every_n_epochs > 0:
+        command.extend(["--checkpoint_every_n_epochs", str(checkpoint_every_n_epochs)])
     return command
 
 
@@ -68,6 +71,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--in-base-dir", default="input")
     parser.add_argument("--save-checkpoint", action="store_true")
     parser.add_argument("--load-snapshot", action="store_true")
+    parser.add_argument("--checkpoint-every-n-epochs", type=int, default=0,
+                        help="Save per-epoch checkpoint every N epochs (0 = only last.ckpt).")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--base-dir", default="results")
     parser.add_argument("--timestamp")
@@ -132,6 +137,7 @@ def main() -> None:
             in_base_dir=args.in_base_dir,
             save_checkpoint=args.save_checkpoint,
             load_snapshot=args.load_snapshot,
+            checkpoint_every_n_epochs=args.checkpoint_every_n_epochs,
         )
         command = build_execution_command(command)
 
