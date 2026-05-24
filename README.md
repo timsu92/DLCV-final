@@ -108,9 +108,13 @@ RUN_DIR=$(python scripts/run_manager.py \
     --notes "EfficientNet-B6 B6 reproduction")
 # e.g. results/2026-05-21-123456-knshnb-b6
 
-# Train (checkpoint saved to <RUN_DIR>/predictions/b6-batch3-accum2/-1/last.ckpt)
-python scripts/run_knshnb.py \
-    --config-path config/efficientnet_b6.yaml \
+# Place config in the run directory
+cp config/efficientnet_b6.yaml "$RUN_DIR/configs/"
+
+# Train — --run-dir writes the actual command back into run_manifest.yaml
+.venv-knshnb/bin/python scripts/run_knshnb.py \
+    --run-dir "$RUN_DIR" \
+    --config-path "$(pwd)/$RUN_DIR/configs/efficientnet_b6.yaml" \
     --exp-name b6-batch3-accum2 \
     --out-base-dir "$(pwd)/$RUN_DIR/predictions" \
     --save-checkpoint
